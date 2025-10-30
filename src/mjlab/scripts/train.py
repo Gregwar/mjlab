@@ -24,9 +24,9 @@ from mjlab.utils.torch import configure_torch_backends
 
 @dataclass(frozen=True)
 class TrainConfig:
-  gym_packages: list[str] = field(default_factory=lambda: [])
   env: Any
   agent: RslRlOnPolicyRunnerCfg
+  gym_packages: list[str] = field(default_factory=lambda: [])
   registry_name: str | None = None
   device: str = "cuda:0"
   video: bool = False
