@@ -1,8 +1,9 @@
 """Script to play RL agent with RSL-RL."""
 
+import importlib
 import os
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Literal, Optional, cast
 
@@ -29,6 +30,7 @@ ResolvedViewer = Literal["native", "viser"]
 
 @dataclass(frozen=True)
 class PlayConfig:
+  gym_packages: list[str] = field(default_factory=lambda: [])
   agent: Literal["zero", "random", "trained"] = "trained"
   registry_name: str | None = None
   wandb_run_path: str | None = None
@@ -57,6 +59,10 @@ def _resolve_viewer_choice(choice: ViewerChoice) -> ResolvedViewer:
 
 def run_play(task: str, cfg: PlayConfig):
   configure_torch_backends()
+
+  for package in cfg.gym_packages:
+    print(f"[INFO]: Importing gym package: {package}")
+    importlib.import_module(package)
 
   device = cfg.device or ("cuda:0" if torch.cuda.is_available() else "cpu")
   print(f"[INFO]: Using device: {device}")

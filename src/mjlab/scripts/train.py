@@ -1,8 +1,9 @@
 """Script to train RL agent with RSL-RL."""
 
+import importlib
 import os
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -23,6 +24,7 @@ from mjlab.utils.torch import configure_torch_backends
 
 @dataclass(frozen=True)
 class TrainConfig:
+  gym_packages: list[str] = field(default_factory=lambda: [])
   env: Any
   agent: RslRlOnPolicyRunnerCfg
   registry_name: str | None = None
@@ -35,6 +37,10 @@ class TrainConfig:
 
 def run_train(task: str, cfg: TrainConfig) -> None:
   configure_torch_backends()
+
+  for package in cfg.gym_packages:
+    print(f"[INFO]: Importing gym package: {package}")
+    importlib.import_module(package)
 
   registry_name: str | None = None
 
